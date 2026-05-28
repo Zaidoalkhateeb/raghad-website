@@ -8,22 +8,40 @@
 ─────────────────────────────────────────────────────────────────────── */
 const MEMORIES = [
   {
-    date:  "25 August 2025 · Cleo's Eatery",
+    date:  '25 August 2025 · Cleo\'s Eatery',
     title: 'Pizza & a Little Shyness',
     story: 'She showed up late — as usual — but walked in looking like she always does, effortlessly beautiful. We ordered pizza, and she was so shy eating in front of me, taking the tiniest bites. I pretended not to notice.',
-    img:   null,   // replace null with e.g. 'pizza-date.jpg'
+    img:   'selfie-yellow.jpg',
   },
   {
-    date:  'A Tuesday in September 2025',
-    title: 'That Quiet Walk',
-    story: 'We walked without a destination, talking about everything and nothing. I remember thinking: I could do this forever. Walk beside her until the world runs out of roads.',
-    img:   null,
+    date:  'A quiet evening together',
+    title: 'That Face Mask Call',
+    story: 'She called me mid-skincare routine, face covered in a chocolate mask, completely unbothered — and still somehow the most beautiful person I had ever seen on a screen. I remember laughing, then realising I was completely in love.',
+    img:   'facetime-mask.jpg',
   },
   {
-    date:  'October 2025',
-    title: 'The First "I Love You"',
-    story: 'Words I had rehearsed a thousand times in my head came out all wrong — but somehow they landed perfectly. She looked at me and my heart forgot how to beat normally.',
-    img:   null,
+    date:  'A night to remember',
+    title: 'Dinner & a Selfie',
+    story: 'She walked in wearing that embroidered abaya, glowing under the warm lights of the restaurant. Before we even ordered she already had her phone up — I didn\'t mind. Every photo she takes looks like art.',
+    img:   'restaurant-date.jpg',
+  },
+  {
+    date:  'King Hussein School of Computing',
+    title: 'Proud of Her, Always',
+    story: 'Standing beside her that day, watching how far she has come — I felt something I could not name. Pride, love, admiration, all at once. She deserves every good thing the world has to give.',
+    img:   'together-school.jpg',
+  },
+  {
+    date:  'A late night',
+    title: 'Running Downtown at Midnight',
+    story: 'She had that hoodie on and that smile that makes you forget what you were even talking about. Late nights on call with her feel shorter than any afternoon without her.',
+    img:   'facetime-hoodie.jpg',
+  },
+  {
+    date:  'Just us',
+    title: 'Ordinary Moments',
+    story: 'No occasion, no plan — just sitting close, saying nothing, needing nothing. Some of my favourite memories of us are the ones where nothing happened at all.',
+    img:   'selfie-together.jpg',
   },
 ];
 
