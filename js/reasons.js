@@ -6,7 +6,6 @@
 const REASONS = [
   { icon: 'star',    title: 'Your Radiant Smile',        desc: 'It lights up every room and instantly makes my day better.' },
   { icon: 'home',    title: 'My Safe Haven',             desc: 'How just being near you feels exactly like coming home.' },
-  { icon: 'compass', title: 'Your Sense of Adventure',   desc: 'You make even the most ordinary days feel like a beautiful journey.' },
   { icon: 'sparkle', title: 'Your Inner Beauty',         desc: 'You are stunning outside, but your soul is what truly captivated me.' },
   { icon: 'music',   title: 'Your Beautiful Voice',      desc: 'Hearing you talk is my favourite melody.' },
   { icon: 'coffee',  title: 'Our Quiet Mornings',        desc: 'The simple joy of sharing coffee and early conversations.' },
@@ -48,3 +47,40 @@ REASONS.forEach((r, i) => {
 
   grid.appendChild(card);
 });
+
+/* ── Add Reason button ─────────────────────────────────────────────── */
+const addBtn = document.createElement('button');
+addBtn.className = 'add-reason-btn';
+addBtn.innerHTML = `
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="16"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+  </svg>
+  Add a Reason
+`;
+
+addBtn.addEventListener('click', () => {
+  const title = prompt('Title (e.g. Your Laugh):');
+  if (!title) return;
+  const desc = prompt('Description:');
+  if (!desc) return;
+
+  const newCard = document.createElement('div');
+  newCard.className = 'rc reveal vis';
+  newCard.innerHTML = `
+    <div class="rc-icon">
+      <svg viewBox="0 0 24 24">${ICONS['heart']}</svg>
+    </div>
+    <h3 class="rc-title">${title}</h3>
+    <p class="rc-desc">${desc}</p>
+  `;
+
+  grid.insertBefore(newCard, addBtn.parentElement ? null : undefined);
+  grid.appendChild(newCard);
+});
+
+const addWrap = document.createElement('div');
+addWrap.className = 'add-reason-wrap';
+addWrap.appendChild(addBtn);
+grid.appendChild(addWrap);

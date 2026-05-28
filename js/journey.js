@@ -1,10 +1,10 @@
 /* ── ADD / EDIT memories here ─────────────────────────────────────────────
    Each entry:
-     date  — displayed above the title  (string)
-     title — headline of the memory     (string)
-     story — body text                  (string)
-     img   — filename inside /images/   (e.g. 'pizza-date.jpg')
-             or null for a placeholder
+     date     — displayed above the title  (string)
+     title    — headline of the memory     (string)
+     story    — body text                  (string)
+     img      — filename inside /images/   (e.g. 'pizza-date.jpg') or null
+     imgPos   — CSS object-position        (optional, default 'center top')
 ─────────────────────────────────────────────────────────────────────── */
 const MEMORIES = [
   {
@@ -29,7 +29,8 @@ const MEMORIES = [
     date:  'Late Nights · 12:41 AM',
     title: 'All Night With You',
     story: "There's something about her at midnight — no makeup, just a hoodie and that soft sleepy smile. We'd stay on call long after we should have said goodnight, not doing anything special, just unwilling to hang up. Those late nights are some of my favourite hours with her.",
-    img:   'facetime-hoodie.jpg',
+    img:    'facetime-hoodie.jpg',
+    imgPos: 'center 35%',
   },
   {
     date:  '7 April 2026 · Last Study Session · Crave',
@@ -41,7 +42,8 @@ const MEMORIES = [
     date:  '26 May 2026 · The Night Before Eid',
     title: 'Skincare & Soft Nights',
     story: "The night before Eid, she called me with a face full of scrub and the biggest smile. We stayed on FaceTime while she finished her routine, then she went to shower. By the time she was done, it was my turn — I started my own skincare while she watched. Then we just stayed on the line, and somewhere in the quiet, we both fell asleep. One of my favourite nights with her.",
-    img:   'facetime-mask.jpg',
+    img:    'facetime-mask.jpg',
+    imgPos: 'center 20%',
   },
 ];
 
@@ -60,8 +62,9 @@ MEMORIES.forEach(m => {
   const item = document.createElement('div');
   item.className = 'mem reveal';
 
+  const pos = m.imgPos || 'center top';
   const imgContent = m.img
-    ? `<img src="images/${m.img}" alt="${m.title}" />`
+    ? `<img src="images/${m.img}" alt="${m.title}" style="object-position:${pos}" />`
     : `<div class="mem-img-placeholder">${PLACEHOLDER_SVG}</div>`;
 
   item.innerHTML = `

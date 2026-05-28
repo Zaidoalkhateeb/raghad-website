@@ -434,6 +434,41 @@ body {
   line-height: 1.75;
 }
 
+/* Add reason button */
+.add-reason-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.add-reason-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .85rem 2rem;
+  border: 1.5px dashed var(--rose);
+  background: transparent;
+  border-radius: 50px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: .9rem;
+  color: var(--rose-deep);
+  cursor: pointer;
+  transition: background .25s ease, border-color .25s ease, transform .2s ease;
+}
+
+.add-reason-btn:hover {
+  background: var(--blush);
+  border-color: var(--rose-deep);
+  border-style: solid;
+  transform: translateY(-2px);
+}
+
+.add-reason-btn svg {
+  stroke: var(--rose-deep);
+}
+
 /* ═══════════════════════════════════════════════
    JOURNEY
 ═══════════════════════════════════════════════ */
