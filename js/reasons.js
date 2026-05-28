@@ -5,7 +5,6 @@
 ─────────────────────────────────────────────────────────────────────── */
 const REASONS = [
   { icon: 'star',    title: 'Your Radiant Smile',        desc: 'It lights up every room and instantly makes my day better.' },
-  { icon: 'heart',   title: 'Your Endless Kindness',     desc: 'The gentle way you treat everyone and everything around you.' },
   { icon: 'home',    title: 'My Safe Haven',             desc: 'How just being near you feels exactly like coming home.' },
   { icon: 'compass', title: 'Your Sense of Adventure',   desc: 'You make even the most ordinary days feel like a beautiful journey.' },
   { icon: 'sparkle', title: 'Your Inner Beauty',         desc: 'You are stunning outside, but your soul is what truly captivated me.' },
@@ -13,8 +12,6 @@ const REASONS = [
   { icon: 'coffee',  title: 'Our Quiet Mornings',        desc: 'The simple joy of sharing coffee and early conversations.' },
   { icon: 'moon',    title: 'Late Night Talks',          desc: "When the world is asleep and it's just the two of us sharing dreams." },
   { icon: 'laugh',   title: 'Your Laughter',             desc: 'The sound that makes everything feel right in the world.' },
-  { icon: 'eye',     title: 'The Way You See the World', desc: 'Your perspective is one of my favourite things to discover.' },
-  { icon: 'sun',     title: 'Your Warmth',               desc: 'You radiate a warmth that draws everyone close — especially me.' },
   { icon: 'book',    title: 'Growing Together',          desc: 'Every day I learn something new and beautiful because of you.' },
 ];
 
