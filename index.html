@@ -93,14 +93,68 @@
        FOOTER
   ═══════════════════════════════ -->
   <footer>
-    <div class="footer-name">Raghad</div>
-    <p class="footer-quote">
-      "In all the world, there is no heart for me like yours.<br>
-      In all the world, there is no love for you like mine."
-    </p>
-    <span class="footer-heart">♥</span>
+    <div class="footer-main">
+
+      <!-- Left -->
+      <div class="footer-left">
+        <h2 class="footer-headline">
+          Built for <em>you</em>,<br>by me.
+        </h2>
+        <p class="footer-tagline">
+          The whole point of this little place is that it grows.<br>Add a memory.
+        </p>
+      </div>
+
+      <!-- Middle -->
+      <div class="footer-col">
+        <p class="footer-col-label">The Numbers</p>
+        <div class="footer-row">
+          <span>Days together</span>
+          <span id="footerDays">—</span>
+        </div>
+        <div class="footer-row">
+          <span>Reasons listed</span>
+          <span>8 of ∞</span>
+        </div>
+        <div class="footer-row">
+          <span>Letters written</span>
+          <span>1, ongoing</span>
+        </div>
+      </div>
+
+      <!-- Right -->
+      <div class="footer-col">
+        <p class="footer-col-label">Private Editorial</p>
+        <div class="footer-row">
+          <span>Audience</span>
+          <em>one</em>
+        </div>
+        <div class="footer-row">
+          <span>Frequency</span>
+          <em>always</em>
+        </div>
+        <div class="footer-row">
+          <span>Founded</span>
+          <em>Jul 30, 2025</em>
+        </div>
+        <div class="footer-row">
+          <span>Status</span>
+          <em>in love</em>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bar">
+      <span>For Raghad &middot; Vol. I &middot; An Issue of One</span>
+      <span>&copy; Us, Indefinitely</span>
+    </div>
   </footer>
 
+  <script>
+    const _d = Math.floor((new Date() - new Date('2025-07-30')) / 86400000);
+    document.getElementById('footerDays').textContent = _d;
+  </script>
   <script src="js/hearts.js"></script>
   <script src="js/counter.js"></script>
   <script src="js/reasons.js"></script>

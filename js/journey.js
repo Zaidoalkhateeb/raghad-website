@@ -78,3 +78,45 @@ MEMORIES.forEach(m => {
 
   wrap.appendChild(item);
 });
+
+/* ── Add Memory button ─────────────────────────────────────────────── */
+const addMemBtn = document.createElement('button');
+addMemBtn.className = 'add-memory-btn';
+addMemBtn.innerHTML = `
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="16"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+  </svg>
+  Add a Memory
+`;
+
+addMemBtn.addEventListener('click', () => {
+  const date  = prompt('Date & place (e.g. 10 June 2026 · Somewhere special):');
+  if (!date) return;
+  const title = prompt('Memory title:');
+  if (!title) return;
+  const story = prompt('Tell the story:');
+  if (!story) return;
+
+  const item = document.createElement('div');
+  item.className = 'mem reveal vis';
+  item.innerHTML = `
+    <div class="mem-img">
+      <div class="mem-img-placeholder">${PLACEHOLDER_SVG}</div>
+    </div>
+    <div class="mem-text">
+      <p class="mem-date">${date}</p>
+      <h3 class="mem-title">${title}</h3>
+      <p class="mem-story">${story}</p>
+    </div>
+  `;
+
+  wrap.insertBefore(item, addMemBtn.parentElement || null);
+  wrap.appendChild(item);
+});
+
+const memBtnWrap = document.createElement('div');
+memBtnWrap.className = 'add-memory-wrap';
+memBtnWrap.appendChild(addMemBtn);
+wrap.appendChild(memBtnWrap);
