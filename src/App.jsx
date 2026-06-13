@@ -107,9 +107,17 @@ function App() {
       return;
     }
 
+    const formattedDate = formData.date
+      ? new Date(`${formData.date}T00:00:00`).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        })
+      : 'New Memory';
+
     const entry = {
       id: crypto.randomUUID(),
-      date: formData.date.trim() || 'New Memory',
+      date: formattedDate,
       title: formData.title.trim(),
       story: formData.story.trim(),
       mood: formData.mood,
@@ -228,10 +236,9 @@ function App() {
           <form onSubmit={onSubmit}>
             <div className="form-grid">
               <label>
-                Date or Moment
+                Date
                 <input
-                  type="text"
-                  placeholder="Example: 13 June 2026"
+                  type="date"
                   value={formData.date}
                   onChange={(event) => setFormData((prev) => ({ ...prev, date: event.target.value }))}
                 />
