@@ -11,7 +11,7 @@ const PLACEHOLDER_SVG = (
   </svg>
 );
 
-function useReveal() {
+function useReveal(deps = []) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -28,7 +28,8 @@ function useReveal() {
     nodes.forEach((node) => observer.observe(node));
 
     return () => observer.disconnect();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
 }
 
 function Hearts() {
@@ -64,8 +65,6 @@ function Hearts() {
 }
 
 function App() {
-  useReveal();
-
   const [customMemories, setCustomMemories] = useState([]);
 
   const [filter, setFilter] = useState('all');
@@ -76,6 +75,8 @@ function App() {
     mood: 'happy',
     imageUrl: ''
   });
+
+  useReveal([customMemories.length, filter]);
 
   const daysTogether = useMemo(() => {
     return Math.floor((Date.now() - new Date(START_DATE).getTime()) / 86400000);
@@ -132,6 +133,14 @@ function App() {
     });
     setFormData({ date: '', title: '', story: '', mood: 'happy', imageUrl: '' });
     setFilter('all');
+  };
+
+  const deleteMemory = (id) => {
+    setCustomMemories((prev) => {
+      const updated = prev.filter((memory) => memory.id !== id);
+      localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (
@@ -338,6 +347,15 @@ function App() {
                   <h3 className="mem-title">{memory.title}</h3>
                   <p className="mem-story">{memory.story}</p>
                   <p className={`mem-mood ${moodClass}`}>{memory.mood} memory</p>
+                  {memory.userAdded && (
+                    <button
+                      type="button"
+                      className="mem-delete-btn"
+                      onClick={() => deleteMemory(memory.id)}
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             );
