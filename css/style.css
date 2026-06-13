@@ -617,27 +617,6 @@ body {
   margin: .4rem 0 1.4rem;
 }
 
-.memory-db-note,
-.memory-db-error,
-.memory-loading {
-  font-family: 'Lato', sans-serif;
-  font-size: .78rem;
-  margin-bottom: .9rem;
-}
-
-.memory-db-note {
-  color: #8a6652;
-}
-
-.memory-db-error {
-  color: #8f2e3a;
-}
-
-.memory-loading {
-  color: var(--text-light);
-  margin-left: .2rem;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

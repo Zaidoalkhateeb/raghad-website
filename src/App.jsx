@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BASE_MEMORIES, ICONS, REASONS, START_DATE } from './data.js';
-import { hasSupabaseConfig, supabase } from './supabaseClient.js';
+
+const MEMORIES_STORAGE_KEY = 'customMemories';
 
 const PLACEHOLDER_SVG = (
   <svg viewBox="0 0 24 24" strokeWidth="1">
@@ -66,8 +67,6 @@ function App() {
   useReveal();
 
   const [customMemories, setCustomMemories] = useState([]);
-  const [isLoadingMemories, setIsLoadingMemories] = useState(true);
-  const [saveError, setSaveError] = useState('');
 
   const [filter, setFilter] = useState('all');
   const [formData, setFormData] = useState({
@@ -92,89 +91,37 @@ function App() {
   }, [allMemories, filter]);
 
   useEffect(() => {
-    const fetchSharedMemories = async () => {
-      if (!hasSupabaseConfig) {
-        setIsLoadingMemories(false);
-        return;
-      }
+    const stored = localStorage.getItem(MEMORIES_STORAGE_KEY);
+    if (!stored) return;
 
-      const { data, error } = await supabase
-        .from('memories')
-        .select('id, date, title, story, mood, image_url, created_at')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        setSaveError('Could not load shared memories. Check database setup.');
-        setIsLoadingMemories(false);
-        return;
-      }
-
-      const mapped = data.map((item) => ({
-        id: item.id,
-        date: item.date,
-        title: item.title,
-        story: item.story,
-        mood: item.mood,
-        imageUrl: item.image_url || '',
-        userAdded: true
-      }));
-
-      setCustomMemories(mapped);
-      setIsLoadingMemories(false);
-    };
-
-    fetchSharedMemories();
+    try {
+      setCustomMemories(JSON.parse(stored));
+    } catch {
+      setCustomMemories([]);
+    }
   }, []);
 
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
     if (!formData.title.trim() || !formData.story.trim()) {
       return;
     }
 
-    if (!hasSupabaseConfig) {
-      setSaveError('Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
-      return;
-    }
-
     const entry = {
+      id: crypto.randomUUID(),
       date: formData.date.trim() || 'New Memory',
       title: formData.title.trim(),
       story: formData.story.trim(),
       mood: formData.mood,
-      imageUrl: formData.imageUrl.trim() || ''
+      imageUrl: formData.imageUrl.trim() || '',
+      userAdded: true
     };
 
-    const { data, error } = await supabase
-      .from('memories')
-      .insert({
-        date: entry.date,
-        title: entry.title,
-        story: entry.story,
-        mood: entry.mood,
-        image_url: entry.imageUrl || null
-      })
-      .select('id, date, title, story, mood, image_url, created_at')
-      .single();
-
-    if (error) {
-      setSaveError('Could not save memory. Please try again.');
-      return;
-    }
-
-    setSaveError('');
-    setCustomMemories((prev) => [
-      {
-        id: data.id,
-        date: data.date,
-        title: data.title,
-        story: data.story,
-        mood: data.mood,
-        imageUrl: data.image_url || '',
-        userAdded: true
-      },
-      ...prev
-    ]);
+    setCustomMemories((prev) => {
+      const updated = [entry, ...prev];
+      localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
     setFormData({ date: '', title: '', story: '', mood: 'happy', imageUrl: '' });
     setFilter('all');
   };
@@ -278,10 +225,6 @@ function App() {
         <div className="memory-form reveal">
           <h3>Add a New Memory</h3>
           <p className="memory-form-sub">Write your own moment and mark it as happy or sad.</p>
-          {!hasSupabaseConfig && (
-            <p className="memory-db-note">Shared DB not connected yet. Add Supabase env values first.</p>
-          )}
-          {saveError && <p className="memory-db-error">{saveError}</p>}
           <form onSubmit={onSubmit}>
             <div className="form-grid">
               <label>
@@ -369,7 +312,6 @@ function App() {
         </div>
 
         <div className="memories">
-          {isLoadingMemories && <p className="memory-loading">Loading shared memories...</p>}
           {visibleMemories.map((memory) => {
             const pos = memory.imgPos || 'center top';
             const moodClass = memory.mood === 'sad' ? 'mood-sad' : 'mood-happy';
