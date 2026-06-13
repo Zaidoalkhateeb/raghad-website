@@ -868,15 +868,67 @@ footer::before {
 /* ═══════════════════════════════════════════════
    SCROLL REVEAL
 ═══════════════════════════════════════════════ */
-.reveal {
+.reveal,
+.mem-reveal {
   opacity: 0;
   transform: translateY(36px);
   transition: opacity .75s ease, transform .75s ease;
 }
 
-.reveal.vis {
+.reveal.vis,
+.mem-reveal.vis {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════
+   UNDO TOAST
+═══════════════════════════════════════════════ */
+.undo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.6rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: var(--text);
+  color: #fff;
+  padding: .8rem 1.5rem;
+  border-radius: 999px;
+  font-family: 'Lato', sans-serif;
+  font-size: .85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+  z-index: 100;
+  animation: toast-in .3s ease;
+}
+
+.undo-toast button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--rose-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .75rem;
+  cursor: pointer;
+}
+
+.undo-toast button:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 /* ═══════════════════════════════════════════════

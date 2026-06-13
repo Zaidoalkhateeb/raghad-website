@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BASE_MEMORIES, ICONS, REASONS, START_DATE } from './data.js';
 
 const MEMORIES_STORAGE_KEY = 'customMemories';
+const UNDO_WINDOW_MS = 5000;
 
 const PLACEHOLDER_SVG = (
   <svg viewBox="0 0 24 24" strokeWidth="1">
@@ -11,7 +12,7 @@ const PLACEHOLDER_SVG = (
   </svg>
 );
 
-function useReveal(deps = []) {
+function useReveal() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -28,8 +29,40 @@ function useReveal(deps = []) {
     nodes.forEach((node) => observer.observe(node));
 
     return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, []);
+}
+
+// Reveals memory cards one at a time as the user scrolls: only the
+// next not-yet-revealed card is observed, so cards appear sequentially.
+function useSequentialReveal(itemCount) {
+  const [revealedCount, setRevealedCount] = useState(1);
+
+  useEffect(() => {
+    setRevealedCount((prev) => Math.min(prev, Math.max(itemCount, 1)));
+  }, [itemCount]);
+
+  useEffect(() => {
+    if (revealedCount >= itemCount) return;
+
+    const sentinel = document.querySelector('.memories .mem-reveal:not(.vis)');
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setRevealedCount((prev) => Math.min(prev + 1, itemCount));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [revealedCount, itemCount]);
+
+  return revealedCount;
 }
 
 function Hearts() {
@@ -76,7 +109,10 @@ function App() {
     imageUrl: ''
   });
 
-  useReveal([customMemories.length, filter]);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const deleteTimerRef = useRef(null);
+
+  useReveal();
 
   const daysTogether = useMemo(() => {
     return Math.floor((Date.now() - new Date(START_DATE).getTime()) / 86400000);
@@ -87,9 +123,13 @@ function App() {
   }, [customMemories]);
 
   const visibleMemories = useMemo(() => {
-    if (filter === 'all') return allMemories;
-    return allMemories.filter((item) => item.mood === filter);
-  }, [allMemories, filter]);
+    const list = filter === 'all' ? allMemories : allMemories.filter((item) => item.mood === filter);
+    if (!pendingDelete) return list;
+    return list.filter((item) => item.id !== pendingDelete.id);
+  }, [allMemories, filter, pendingDelete]);
+
+  const revealedCount = useSequentialReveal(visibleMemories.length);
+  const memoriesToRender = visibleMemories.slice(0, Math.min(revealedCount + 1, visibleMemories.length));
 
   useEffect(() => {
     const stored = localStorage.getItem(MEMORIES_STORAGE_KEY);
@@ -135,13 +175,35 @@ function App() {
     setFilter('all');
   };
 
-  const deleteMemory = (id) => {
+  const commitDelete = (id) => {
     setCustomMemories((prev) => {
       const updated = prev.filter((memory) => memory.id !== id);
       localStorage.setItem(MEMORIES_STORAGE_KEY, JSON.stringify(updated));
       return updated;
     });
   };
+
+  const requestDelete = (memory) => {
+    if (pendingDelete) {
+      clearTimeout(deleteTimerRef.current);
+      commitDelete(pendingDelete.id);
+    }
+
+    setPendingDelete({ id: memory.id, title: memory.title });
+    deleteTimerRef.current = setTimeout(() => {
+      commitDelete(memory.id);
+      setPendingDelete(null);
+    }, UNDO_WINDOW_MS);
+  };
+
+  const undoDelete = () => {
+    clearTimeout(deleteTimerRef.current);
+    setPendingDelete(null);
+  };
+
+  useEffect(() => {
+    return () => clearTimeout(deleteTimerRef.current);
+  }, []);
 
   return (
     <>
@@ -328,11 +390,12 @@ function App() {
         </div>
 
         <div className="memories">
-          {visibleMemories.map((memory) => {
+          {memoriesToRender.map((memory, index) => {
             const pos = memory.imgPos || 'center top';
             const moodClass = memory.mood === 'sad' ? 'mood-sad' : 'mood-happy';
+            const isRevealed = index < revealedCount;
             return (
-              <div className="mem reveal" key={memory.id}>
+              <div className={`mem mem-reveal${isRevealed ? ' vis' : ''}`} key={memory.id}>
                 <div className="mem-img">
                   {memory.imageUrl ? (
                     <img src={memory.imageUrl} alt={memory.title} style={{ objectPosition: pos }} />
@@ -351,7 +414,7 @@ function App() {
                     <button
                       type="button"
                       className="mem-delete-btn"
-                      onClick={() => deleteMemory(memory.id)}
+                      onClick={() => requestDelete(memory)}
                     >
                       Delete
                     </button>
@@ -362,6 +425,15 @@ function App() {
           })}
         </div>
       </section>
+
+      {pendingDelete && (
+        <div className="undo-toast">
+          <span>&ldquo;{pendingDelete.title}&rdquo; deleted</span>
+          <button type="button" onClick={undoDelete}>
+            Undo
+          </button>
+        </div>
+      )}
 
       <footer>
         <div className="footer-main">
