@@ -13,11 +13,17 @@ export function Journey({ memories }) {
       <MemoryForm onAdd={addMemory} />
       <MemoryFilters filter={filter} onChange={setFilter} />
 
-      <div className="memories reveal">
-        {visibleMemories.map((memory) => (
-          <MemoryCard key={memory.id} memory={memory} onDelete={requestDelete} />
-        ))}
-      </div>
+      {visibleMemories.length > 0 ? (
+        <div className="memories reveal">
+          {visibleMemories.map((memory) => (
+            <MemoryCard key={memory.id} memory={memory} onDelete={requestDelete} />
+          ))}
+        </div>
+      ) : (
+        <p className="memories-empty">
+          {filter === 'all' ? 'No memories yet' : `No ${filter} memories yet`} &mdash; add one above.
+        </p>
+      )}
     </section>
   );
 }

@@ -21,12 +21,16 @@ function App() {
 
   return (
     <>
+      <a className="skip-link" href="#main-content">Skip to content</a>
+
       <Hearts />
 
-      <Hero daysTogether={daysTogether} />
-      <LoveLetter />
-      <Reasons />
-      <Journey memories={memories} />
+      <main id="main-content">
+        <Hero daysTogether={daysTogether} />
+        <LoveLetter />
+        <Reasons />
+        <Journey memories={memories} />
+      </main>
 
       <UndoToast pendingDelete={memories.pendingDelete} onUndo={memories.undoDelete} />
 
