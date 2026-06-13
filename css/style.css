@@ -20,21 +20,41 @@
   --footer-bg:  var(--burgundy);
   --hero-glow:  #FAE8EA;
   --toast-bg:   #3D1A1F;
+  --input-border:     rgba(163, 73, 90, .24);
+  --input-focus-ring: rgba(200, 112, 122, .14);
+  --mood-happy-bg:    rgba(104, 169, 118, .13);
+  --mood-happy-text:  #3f7d4b;
+  --mood-sad-bg:      rgba(109, 134, 170, .16);
+  --mood-sad-text:    #35557d;
+  --mood-sad-accent:  #6d86aa;
+  --danger:           #8f2e3a;
+  --danger-border:    rgba(143, 46, 58, .3);
+  --danger-contrast:  #ffffff;
 }
 
 [data-theme="dark"] {
-  --cream:      #1B1115;
-  --blush:      #2A1A20;
-  --rose-light: #5C3640;
-  --rose:       #D98C95;
-  --rose-deep:  #E8A4AC;
-  --burgundy:   #F3D6DC;
-  --text:       #F3E7E9;
-  --text-light: #C9A8B0;
-  --card-bg:    #2A1A20;
-  --footer-bg:  #120A0D;
-  --hero-glow:  #3A1F28;
-  --toast-bg:   #000000;
+  --cream:      #211519;
+  --blush:      #3A2730;
+  --rose-light: #7A4F5C;
+  --rose:       #E8949E;
+  --rose-deep:  #F0AAB4;
+  --burgundy:   #F2C6CE;
+  --text:       #F1E4E6;
+  --text-light: #CDA8B2;
+  --card-bg:    #2D1D23;
+  --footer-bg:  #160B0F;
+  --hero-glow:  #3D2530;
+  --toast-bg:   #160B0F;
+  --input-border:     rgba(232, 154, 166, .28);
+  --input-focus-ring: rgba(232, 154, 166, .18);
+  --mood-happy-bg:    rgba(120, 200, 140, .16);
+  --mood-happy-text:  #9CE3B2;
+  --mood-sad-bg:      rgba(140, 175, 230, .18);
+  --mood-sad-text:    #AEC6F2;
+  --mood-sad-accent:  #93B3E6;
+  --danger:           #F2A0AC;
+  --danger-border:    rgba(242, 160, 172, .35);
+  --danger-contrast:  #2D1D23;
 }
 
 html {
@@ -599,7 +619,7 @@ body {
 }
 
 .mem.mood-sad .mem-dot {
-  border-color: #6d86aa;
+  border-color: var(--mood-sad-accent);
 }
 
 .mem-img {
@@ -682,7 +702,7 @@ body {
 }
 
 .mem.mood-sad .mem-img::before {
-  border-color: #6d86aa;
+  border-color: var(--mood-sad-accent);
 }
 
 .mem-date {
@@ -724,20 +744,20 @@ body {
 }
 
 .mem-mood.mood-happy {
-  background: rgba(104, 169, 118, .13);
-  color: #3f7d4b;
+  background: var(--mood-happy-bg);
+  color: var(--mood-happy-text);
 }
 
 .mem-mood.mood-sad {
-  background: rgba(109, 134, 170, .16);
-  color: #35557d;
+  background: var(--mood-sad-bg);
+  color: var(--mood-sad-text);
 }
 
 .mem-delete-btn {
   display: block;
   margin-top: .9rem;
   padding: .32rem .8rem;
-  border: 1px solid rgba(143, 46, 58, .3);
+  border: 1px solid var(--danger-border);
   border-radius: 999px;
   background: none;
   font-family: 'Lato', sans-serif;
@@ -745,14 +765,14 @@ body {
   letter-spacing: .08em;
   text-transform: uppercase;
   font-size: .64rem;
-  color: #8f2e3a;
+  color: var(--danger);
   cursor: pointer;
-  transition: background .2s ease, color .2s ease;
+  transition: background .2s ease, color .2s ease, border-color .4s ease;
 }
 
 .mem-delete-btn:hover {
-  background: #8f2e3a;
-  color: #fff;
+  background: var(--danger);
+  color: var(--danger-contrast);
 }
 
 .memory-form {
@@ -802,7 +822,7 @@ body {
 .form-grid textarea,
 .form-grid select {
   width: 100%;
-  border: 1px solid rgba(163,73,90,.24);
+  border: 1px solid var(--input-border);
   border-radius: 10px;
   background: var(--card-bg);
   font-family: 'Lato', sans-serif;
@@ -810,7 +830,7 @@ body {
   color: var(--text);
   padding: .75rem .85rem;
   outline: none;
-  transition: border-color .2s ease, box-shadow .2s ease, background-color .4s ease, color .4s ease;
+  transition: border-color .4s ease, box-shadow .2s ease, background-color .4s ease, color .4s ease;
 }
 
 .form-grid textarea {
@@ -822,7 +842,7 @@ body {
 .form-grid textarea:focus,
 .form-grid select:focus {
   border-color: var(--rose);
-  box-shadow: 0 0 0 3px rgba(200,112,122,.14);
+  box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
 
 .memory-form .add-memory-btn {
@@ -1109,5 +1129,35 @@ footer::before {
   .memories::before,
   .mem-dot {
     display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   ACCESSIBILITY
+═══════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--rose-deep);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.theme-toggle:focus-visible,
+.mem-delete-btn:focus-visible,
+.undo-toast button:focus-visible {
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero-bg {
+    transform: none !important;
   }
 }

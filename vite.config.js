@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/raghad-website/'
+  base: '/raghad-website/',
+  esbuild: {
+    jsx: 'automatic'
+  }
 });
