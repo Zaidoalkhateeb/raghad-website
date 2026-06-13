@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BASE_MEMORIES } from '../data.js';
+import { BASE_MEMORIES } from '../content.js';
 import { useLocalStorage } from './useLocalStorage.js';
 
 const MEMORIES_STORAGE_KEY = 'customMemories';

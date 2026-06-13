@@ -1,4 +1,5 @@
-import { ICONS, REASONS } from '../data.js';
+import { ICONS } from '../data.js';
+import { REASONS } from '../content.js';
 import { SectionHeader } from './SectionHeader.jsx';
 
 export function Reasons() {

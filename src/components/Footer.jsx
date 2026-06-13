@@ -1,8 +1,5 @@
-import { ICONS, REASONS } from '../data.js';
-
-const CALENDAR_ICON = '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>';
-const IMAGE_ICON = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>';
-const CLOCK_ICON = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>';
+import { ICONS } from '../data.js';
+import { FOOTER_CONTENT, REASONS, SITE_CONFIG } from '../content.js';
 
 function FooterRow({ icon, label, value, isQuote }) {
   return (
@@ -22,26 +19,28 @@ export function Footer({ daysTogether, memoriesCount }) {
       <div className="footer-main">
         <div className="footer-left">
           <h2 className="footer-headline">
-            Built for <em>you</em>,
+            {FOOTER_CONTENT.headlineBefore}
+            <em>{FOOTER_CONTENT.headlineEmphasis}</em>
+            {FOOTER_CONTENT.headlineAfter}
             <br />
-            by me.
+            {FOOTER_CONTENT.headlineLine2}
           </h2>
           <p className="footer-tagline">
-            The whole point of this little place is that it grows.
+            {FOOTER_CONTENT.tagline[0]}
             <br />
-            Add a memory.
+            {FOOTER_CONTENT.tagline[1]}
           </p>
         </div>
 
         <div className="footer-col">
-          <FooterRow icon={CLOCK_ICON} label="Days together" value={daysTogether} />
+          <FooterRow icon={ICONS.clock} label="Days together" value={daysTogether} />
           <FooterRow icon={ICONS.sparkle} label="Reasons listed" value={`${REASONS.length} of infinity`} />
-          <FooterRow icon={IMAGE_ICON} label="Memories saved" value={memoriesCount} />
+          <FooterRow icon={ICONS.image} label="Memories saved" value={memoriesCount} />
         </div>
 
         <div className="footer-col">
-          <FooterRow icon={CALENDAR_ICON} label="Founded" value="Jul 30, 2025" isQuote />
-          <FooterRow icon={ICONS.heart} label="Status" value="in love" isQuote />
+          <FooterRow icon={ICONS.calendar} label="Founded" value={SITE_CONFIG.founded} isQuote />
+          <FooterRow icon={ICONS.heart} label="Status" value={SITE_CONFIG.status} isQuote />
         </div>
       </div>
     </footer>

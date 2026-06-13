@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ICONS } from '../data.js';
+import { MoodToggle } from './MoodToggle.jsx';
 
 const EMPTY_FORM = { date: '', title: '', story: '', mood: 'happy', imageUrl: '' };
 
@@ -7,6 +9,10 @@ export function MemoryForm({ onAdd }) {
 
   const updateField = (field) => (event) => {
     setFormData((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const setMood = (mood) => {
+    setFormData((prev) => ({ ...prev, mood }));
   };
 
   const onSubmit = (event) => {
@@ -42,16 +48,16 @@ export function MemoryForm({ onAdd }) {
         <div className="form-grid">
           <label>
             Date
-            <input type="date" value={formData.date} onChange={updateField('date')} />
+            <span className="date-field">
+              <input type="date" value={formData.date} onChange={updateField('date')} />
+              <svg className="date-field-icon" viewBox="0 0 24 24" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.calendar }} />
+            </span>
           </label>
 
-          <label>
-            Mood
-            <select value={formData.mood} onChange={updateField('mood')}>
-              <option value="happy">Happy</option>
-              <option value="sad">Sad</option>
-            </select>
-          </label>
+          <div className="form-field">
+            <span className="form-field-label" id="mood-field-label">Mood</span>
+            <MoodToggle value={formData.mood} onChange={setMood} labelledBy="mood-field-label" />
+          </div>
 
           <label className="full-row">
             Title
