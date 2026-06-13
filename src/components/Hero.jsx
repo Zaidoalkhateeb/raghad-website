@@ -6,6 +6,8 @@ export function Hero({ daysTogether }) {
   return (
     <section id="hero">
       <div className="hero-bg" ref={parallaxRef} />
+      <div className="hero-orb hero-orb--one" aria-hidden="true" />
+      <div className="hero-orb hero-orb--two" aria-hidden="true" />
 
       <p className="hero-eyebrow">For My Dearest</p>
       <h1 className="hero-name">Raghad</h1>
