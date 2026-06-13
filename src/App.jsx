@@ -321,7 +321,7 @@ function App() {
                   {memory.imageUrl ? (
                     <img src={memory.imageUrl} alt={memory.title} style={{ objectPosition: pos }} />
                   ) : memory.img ? (
-                    <img src={`/images/${memory.img}`} alt={memory.title} style={{ objectPosition: pos }} />
+                    <img src={`${import.meta.env.BASE_URL}images/${memory.img}`} alt={memory.title} style={{ objectPosition: pos }} />
                   ) : (
                     <div className="mem-img-placeholder">{PLACEHOLDER_SVG}</div>
                   )}
