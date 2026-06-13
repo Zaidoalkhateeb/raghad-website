@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BASE_MEMORIES, ICONS, REASONS, START_DATE } from './data.js';
+import { hasSupabaseConfig, supabase } from './supabaseClient.js';
 
 const PLACEHOLDER_SVG = (
   <svg viewBox="0 0 24 24" strokeWidth="1">
@@ -8,8 +9,6 @@ const PLACEHOLDER_SVG = (
     <polyline points="21 15 16 10 5 21" />
   </svg>
 );
-
-const STORAGE_KEY = 'raghad.customMemories.v1';
 
 function useReveal() {
   useEffect(() => {
@@ -66,16 +65,9 @@ function Hearts() {
 function App() {
   useReveal();
 
-  const [customMemories, setCustomMemories] = useState(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
+  const [customMemories, setCustomMemories] = useState([]);
+  const [isLoadingMemories, setIsLoadingMemories] = useState(true);
+  const [saveError, setSaveError] = useState('');
 
   const [filter, setFilter] = useState('all');
   const [formData, setFormData] = useState({
@@ -100,26 +92,89 @@ function App() {
   }, [allMemories, filter]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customMemories));
-  }, [customMemories]);
+    const fetchSharedMemories = async () => {
+      if (!hasSupabaseConfig) {
+        setIsLoadingMemories(false);
+        return;
+      }
 
-  const onSubmit = (event) => {
+      const { data, error } = await supabase
+        .from('memories')
+        .select('id, date, title, story, mood, image_url, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        setSaveError('Could not load shared memories. Check database setup.');
+        setIsLoadingMemories(false);
+        return;
+      }
+
+      const mapped = data.map((item) => ({
+        id: item.id,
+        date: item.date,
+        title: item.title,
+        story: item.story,
+        mood: item.mood,
+        imageUrl: item.image_url || '',
+        userAdded: true
+      }));
+
+      setCustomMemories(mapped);
+      setIsLoadingMemories(false);
+    };
+
+    fetchSharedMemories();
+  }, []);
+
+  const onSubmit = async (event) => {
     event.preventDefault();
     if (!formData.title.trim() || !formData.story.trim()) {
       return;
     }
 
+    if (!hasSupabaseConfig) {
+      setSaveError('Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+      return;
+    }
+
     const entry = {
-      id: `u-${Date.now()}`,
       date: formData.date.trim() || 'New Memory',
       title: formData.title.trim(),
       story: formData.story.trim(),
       mood: formData.mood,
-      userAdded: true,
       imageUrl: formData.imageUrl.trim() || ''
     };
 
-    setCustomMemories((prev) => [entry, ...prev]);
+    const { data, error } = await supabase
+      .from('memories')
+      .insert({
+        date: entry.date,
+        title: entry.title,
+        story: entry.story,
+        mood: entry.mood,
+        image_url: entry.imageUrl || null
+      })
+      .select('id, date, title, story, mood, image_url, created_at')
+      .single();
+
+    if (error) {
+      setSaveError('Could not save memory. Please try again.');
+      return;
+    }
+
+    setSaveError('');
+    setCustomMemories((prev) => [
+      {
+        id: data.id,
+        date: data.date,
+        title: data.title,
+        story: data.story,
+        mood: data.mood,
+        imageUrl: data.image_url || '',
+        userAdded: true
+      },
+      ...prev
+    ]);
     setFormData({ date: '', title: '', story: '', mood: 'happy', imageUrl: '' });
     setFilter('all');
   };
@@ -223,6 +278,10 @@ function App() {
         <div className="memory-form reveal">
           <h3>Add a New Memory</h3>
           <p className="memory-form-sub">Write your own moment and mark it as happy or sad.</p>
+          {!hasSupabaseConfig && (
+            <p className="memory-db-note">Shared DB not connected yet. Add Supabase env values first.</p>
+          )}
+          {saveError && <p className="memory-db-error">{saveError}</p>}
           <form onSubmit={onSubmit}>
             <div className="form-grid">
               <label>
@@ -310,6 +369,7 @@ function App() {
         </div>
 
         <div className="memories">
+          {isLoadingMemories && <p className="memory-loading">Loading shared memories...</p>}
           {visibleMemories.map((memory) => {
             const pos = memory.imgPos || 'center top';
             const moodClass = memory.mood === 'sad' ? 'mood-sad' : 'mood-happy';
