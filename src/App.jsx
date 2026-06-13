@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BASE_MEMORIES, ICONS, REASONS, START_DATE } from './data.js';
 
 const MEMORIES_STORAGE_KEY = 'customMemories';
+const THEME_STORAGE_KEY = 'themePreference';
 const UNDO_WINDOW_MS = 5000;
 
 const PLACEHOLDER_SVG = (
@@ -9,6 +10,19 @@ const PLACEHOLDER_SVG = (
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <circle cx="8.5" cy="8.5" r="1.5" />
     <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
+
+const SUN_SVG = (
+  <svg viewBox="0 0 24 24" strokeWidth="1.6">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  </svg>
+);
+
+const MOON_SVG = (
+  <svg viewBox="0 0 24 24" strokeWidth="1.6">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
 
@@ -65,6 +79,56 @@ function useSequentialReveal(itemCount) {
   return revealedCount;
 }
 
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+
+  return [theme, toggleTheme];
+}
+
+// Tracks scroll position (throttled to animation frames) for the hero parallax layer.
+function useParallax() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrollY(window.scrollY);
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return scrollY;
+}
+
+// Shows a shimmering skeleton until the memory photo finishes loading.
+function MemoryImage({ src, alt, pos }) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <div className={`mem-img-frame${loaded ? ' is-loaded' : ''}`}>
+      <img src={src} alt={alt} style={{ objectPosition: pos }} onLoad={() => setLoaded(true)} />
+    </div>
+  );
+}
+
 function Hearts() {
   const hearts = useMemo(() => {
     return Array.from({ length: 28 }, (_, i) => {
@@ -111,6 +175,9 @@ function App() {
 
   const [pendingDelete, setPendingDelete] = useState(null);
   const deleteTimerRef = useRef(null);
+
+  const [theme, toggleTheme] = useTheme();
+  const scrollY = useParallax();
 
   useReveal();
 
@@ -209,7 +276,18 @@ function App() {
     <>
       <Hearts />
 
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={toggleTheme}
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? SUN_SVG : MOON_SVG}
+      </button>
+
       <section id="hero">
+        <div className="hero-bg" style={{ transform: `translateY(${scrollY * 0.35}px)` }} />
+
         <p className="hero-eyebrow">For My Dearest</p>
         <h1 className="hero-name">Raghad</h1>
         <p className="hero-sub">
@@ -395,12 +473,13 @@ function App() {
             const moodClass = memory.mood === 'sad' ? 'mood-sad' : 'mood-happy';
             const isRevealed = index < revealedCount;
             return (
-              <div className={`mem mem-reveal${isRevealed ? ' vis' : ''}`} key={memory.id}>
+              <div className={`mem mem-reveal ${moodClass}${isRevealed ? ' vis' : ''}`} key={memory.id}>
+                <div className="mem-dot" aria-hidden="true" />
                 <div className="mem-img">
                   {memory.imageUrl ? (
-                    <img src={memory.imageUrl} alt={memory.title} style={{ objectPosition: pos }} />
+                    <MemoryImage src={memory.imageUrl} alt={memory.title} pos={pos} />
                   ) : memory.img ? (
-                    <img src={`${import.meta.env.BASE_URL}images/${memory.img}`} alt={memory.title} style={{ objectPosition: pos }} />
+                    <MemoryImage src={`${import.meta.env.BASE_URL}images/${memory.img}`} alt={memory.title} pos={pos} />
                   ) : (
                     <div className="mem-img-placeholder">{PLACEHOLDER_SVG}</div>
                   )}

@@ -16,6 +16,25 @@
   --burgundy:   #5D1A2B;
   --text:       #3D1A1F;
   --text-light: #7A4A55;
+  --card-bg:    #FFFFFF;
+  --footer-bg:  var(--burgundy);
+  --hero-glow:  #FAE8EA;
+  --toast-bg:   #3D1A1F;
+}
+
+[data-theme="dark"] {
+  --cream:      #1B1115;
+  --blush:      #2A1A20;
+  --rose-light: #5C3640;
+  --rose:       #D98C95;
+  --rose-deep:  #E8A4AC;
+  --burgundy:   #F3D6DC;
+  --text:       #F3E7E9;
+  --text-light: #C9A8B0;
+  --card-bg:    #2A1A20;
+  --footer-bg:  #120A0D;
+  --hero-glow:  #3A1F28;
+  --toast-bg:   #000000;
 }
 
 html {
@@ -27,6 +46,43 @@ body {
   background: var(--cream);
   color: var(--text);
   overflow-x: hidden;
+  transition: background-color .4s ease, color .4s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════════ */
+.theme-toggle {
+  position: fixed;
+  top: 1.4rem;
+  right: 1.4rem;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--rose-light);
+  background: var(--card-bg);
+  color: var(--rose-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(163,73,90,.14);
+  transition: background-color .4s ease, border-color .4s ease, color .4s ease, transform .2s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.08);
+}
+
+.theme-toggle svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* ═══════════════════════════════════════════════
@@ -71,7 +127,18 @@ body {
   justify-content: center;
   text-align: center;
   padding: 2rem;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, #FAE8EA 0%, var(--cream) 70%);
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  top: -25%;
+  left: 0;
+  right: 0;
+  height: 150%;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--hero-glow) 0%, var(--cream) 70%);
+  transition: background .4s ease;
+  pointer-events: none;
 }
 
 .hero-eyebrow {
@@ -235,7 +302,7 @@ body {
 }
 
 .letter-card {
-  background: #fff;
+  background: var(--card-bg);
   max-width: 740px;
   width: 100%;
   padding: 4.5rem 5rem;
@@ -246,6 +313,7 @@ body {
     0 1px 3px rgba(0,0,0,.04);
   position: relative;
   overflow: hidden;
+  transition: background-color .4s ease;
 }
 
 .letter-card::before {
@@ -370,11 +438,11 @@ body {
 }
 
 .rc {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 18px;
   padding: 2.2rem 1.8rem;
   box-shadow: 0 2px 24px rgba(163,73,90,.07);
-  transition: transform .3s ease, box-shadow .3s ease;
+  transition: transform .3s ease, box-shadow .3s ease, background-color .4s ease;
   position: relative;
   overflow: hidden;
 }
@@ -485,6 +553,19 @@ body {
   display: flex;
   flex-direction: column;
   gap: 7rem;
+  position: relative;
+}
+
+.memories::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--rose-light) 4%, var(--rose-light) 96%, transparent);
+  transform: translateX(-50%);
+  transition: background .4s ease;
 }
 
 .mem {
@@ -492,24 +573,76 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .mem:nth-child(even) .mem-img  { order: 2; }
 .mem:nth-child(even) .mem-text { order: 1; }
 
+/* Timeline dot */
+.mem-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--rose);
+  transform: translate(-50%, -50%) scale(.6);
+  transition: transform .5s ease, border-color .4s ease, background-color .4s ease;
+}
+
+.mem-reveal.vis .mem-dot {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.mem.mood-sad .mem-dot {
+  border-color: #6d86aa;
+}
+
 .mem-img {
   position: relative;
 }
 
-.mem-img img {
-  width: 100%;
-  height: 480px;
-  object-fit: cover;
-  object-position: center top;
-  border-radius: 4px;
-  display: block;
+.mem-img-frame {
   position: relative;
   z-index: 1;
+  width: 100%;
+  height: 480px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: linear-gradient(110deg, var(--blush) 8%, var(--rose-light) 18%, var(--blush) 33%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+.mem-img-frame.is-loaded {
+  animation: none;
+  background: none;
+}
+
+.mem-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  opacity: 0;
+  transition: opacity .5s ease, transform .6s ease;
+}
+
+.mem-img-frame.is-loaded img {
+  opacity: 1;
+}
+
+.mem:hover .mem-img-frame img {
+  transform: scale(1.06);
+}
+
+@keyframes shimmer {
+  to { background-position-x: -200%; }
 }
 
 .mem-img-placeholder {
@@ -522,6 +655,7 @@ body {
   justify-content: center;
   position: relative;
   z-index: 1;
+  transition: background .4s ease;
 }
 
 .mem-img-placeholder svg {
@@ -540,11 +674,15 @@ body {
   border: 1px solid var(--rose-light);
   border-radius: 6px;
   z-index: 0;
-  transition: transform .4s ease;
+  transition: transform .4s ease, border-color .4s ease;
 }
 
 .mem:hover .mem-img::before {
   transform: translate(5px, 5px);
+}
+
+.mem.mood-sad .mem-img::before {
+  border-color: #6d86aa;
 }
 
 .mem-date {
@@ -585,12 +723,12 @@ body {
   font-size: .64rem;
 }
 
-.mood-happy {
+.mem-mood.mood-happy {
   background: rgba(104, 169, 118, .13);
   color: #3f7d4b;
 }
 
-.mood-sad {
+.mem-mood.mood-sad {
   background: rgba(109, 134, 170, .16);
   color: #35557d;
 }
@@ -620,10 +758,11 @@ body {
 .memory-form {
   max-width: 1020px;
   margin: 0 auto 2.5rem;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 18px;
   box-shadow: 0 2px 24px rgba(163,73,90,.09);
   padding: 2rem;
+  transition: background-color .4s ease;
 }
 
 .memory-form h3 {
@@ -665,13 +804,13 @@ body {
   width: 100%;
   border: 1px solid rgba(163,73,90,.24);
   border-radius: 10px;
-  background: #fff;
+  background: var(--card-bg);
   font-family: 'Lato', sans-serif;
   font-size: .9rem;
   color: var(--text);
   padding: .75rem .85rem;
   outline: none;
-  transition: border-color .2s ease, box-shadow .2s ease;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .4s ease, color .4s ease;
 }
 
 .form-grid textarea {
@@ -699,7 +838,7 @@ body {
 
 .memory-filters button {
   border: 1px solid var(--rose-light);
-  background: #fff;
+  background: var(--card-bg);
   color: var(--rose-deep);
   border-radius: 999px;
   padding: .42rem .95rem;
@@ -708,7 +847,7 @@ body {
   letter-spacing: .06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all .2s ease, background-color .4s ease;
 }
 
 .memory-filters button:hover,
@@ -757,9 +896,10 @@ body {
 footer {
   position: relative;
   z-index: 1;
-  background: var(--burgundy);
+  background: var(--footer-bg);
   padding: 5rem 6vw 0;
   overflow: hidden;
+  transition: background-color .4s ease;
 }
 
 footer::before {
@@ -892,7 +1032,7 @@ footer::before {
   display: flex;
   align-items: center;
   gap: 1.2rem;
-  background: var(--text);
+  background: var(--toast-bg);
   color: #fff;
   padding: .8rem 1.5rem;
   border-radius: 999px;
@@ -961,8 +1101,13 @@ footer::before {
     order: unset;
   }
 
-  .mem-img img,
+  .mem-img-frame,
   .mem-img-placeholder {
     height: 290px;
+  }
+
+  .memories::before,
+  .mem-dot {
+    display: none;
   }
 }
