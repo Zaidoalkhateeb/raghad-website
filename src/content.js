@@ -60,7 +60,7 @@ export const BASE_MEMORIES = [
     title: 'She Showed Up',
     story: "She was on time - not a minute late. She met Sara and Leen, smiled through every introduction even though she was shy, and stood next to me like she'd always belonged there. She showed up for me. I couldn't make it to hers, and that still sits heavy - but the fact that she came, dressed in all black and full of quiet grace, is something I will never forget.",
     img: 'together-school.jpg',
-    mood: 'sad'
+    mood: 'happy'
   },
   {
     id: 'm4',
@@ -77,7 +77,7 @@ export const BASE_MEMORIES = [
     title: 'Books, Coffee & You',
     story: "We sat across from each other at Crave, pretending to study, but mostly just existing in the same space and feeling lucky about it. I didn't know then that it would be the last time. Now I miss it more than I expected - the quiet of sitting beside her, the way she'd look up from her notes. I hope we get that back.",
     img: 'selfie-together.jpg',
-    mood: 'sad'
+    mood: 'happy'
   },
   {
     id: 'm6',
