@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { BASE_MEMORIES, ICONS, REASONS, START_DATE } from './data.js';
 
 const PLACEHOLDER_SVG = (
